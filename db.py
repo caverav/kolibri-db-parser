@@ -9,7 +9,7 @@ res = c.fetchall()
 for i in range(len(res)):
     print("["+str(i)+"]"+res[i][0])
 inn = int(input("Ingrese el número del documento que desea buscar: "))
-# print the local_file_id of the content node
+# TODO: solucionar problema de semanas, ya que no son un recurso en sí, sino una "carpeta" de recursos
 c.execute("SELECT id FROM content_contentnode WHERE title = '" + res[inn][0]+"'")
 res = c.fetchall()
 if c.execute("SELECT local_file_id FROM content_file WHERE contentnode_id = \"" + str(res[0][0])+"\" AND preset NOT LIKE '%thumbnail%'"):
