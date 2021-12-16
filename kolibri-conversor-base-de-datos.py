@@ -27,14 +27,10 @@ with open('content_contentnode.csv', 'w', newline='') as csvfile:
         print("Row: ")
         print(row)
         print("Local_file_id: ")
-        if local_file_id is None:
-            print("None")
-        else:
+        if not (local_file_id is None):
             print(local_file_id[0])
             local_file_id = local_file_id[0]
-        if local_file_id_thumb is None:
-            print("None")
-        else:
+        if not (local_file_id_thumb is None):
             print(local_file_id_thumb[0])
             local_file_id_thumb = local_file_id_thumb[0]
         csvwriter.writerow(tuple(list(row)+[local_file_id]+[local_file_id_thumb]))
@@ -42,16 +38,3 @@ with open('content_contentnode.csv', 'w', newline='') as csvfile:
 conn.close()
 conn2.close()
 csvfile.close()
-
-# c.execute("SELECT id FROM content_contentnode WHERE title = '" + res[inn][0]+"'")
-# res = c.fetchall()
-# if c.execute("SELECT local_file_id FROM content_file WHERE contentnode_id = \"" + str(res[0][0])+"\" AND preset NOT LIKE '%thumbnail%'"):
-#     rec = c.fetchall()[0][0]
-#     print("El recurso se encuentra en storage/" +str(rec[0]) + "/" + str(rec[1]) + "/" + str(rec))
-# if c.execute("SELECT local_file_id FROM content_file WHERE contentnode_id = \"" + str(res[0][0])+"\" AND preset LIKE '%thumbnail%'"):
-#     thumb = c.fetchall()[0][0]
-#     print("La miniatura se encuentra en https://truful.newtenberg.com/kolibri/content/storage/" +str(thumb[0]) + "/" + str(thumb[1]) + "/" + str(thumb))
-
-
-
-
