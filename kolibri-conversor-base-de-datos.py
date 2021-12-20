@@ -16,7 +16,7 @@ c = conn.cursor()
 # CREACION DEL CSV
 
 # Columnas
-fieldnames = ['id', 'title', 'content_id', 'channel_id', 'description', 'sort_order', 'license_owner', 'author', 'kind', 'available', 'lft', 'rght', 'tree_id', 'level', 'lang_id', 'license_description', 'license_name', 'coach_content', 'num_coach_contents', 'on_device_resources', 'options', 'parent_id', 'local_file_id', 'local_file_id_thumb']
+fieldnames = ['id', 'title', 'content_id', 'channel_id', 'description', 'sort_order', 'license_owner', 'author', 'kind', 'available', 'lft', 'rght', 'tree_id', 'level', 'lang_id', 'license_description', 'license_name', 'coach_content', 'num_coach_contents', 'on_device_resources', 'options', 'parent_id', 'local_file_id', 'local_file_id_thumb', 'parents'] # falta columna padres y columna tags
 
 with open('content_contentnode.csv', 'w', newline='') as csvfile:
 
@@ -31,6 +31,8 @@ with open('content_contentnode.csv', 'w', newline='') as csvfile:
 
     # Iterar por cada fila de content_contentnode
     for row in c.execute('SELECT * FROM content_contentnode'):
+        flag = True
+
         # local file id
         local_file_id = c2.execute('SELECT local_file_id FROM content_file WHERE contentnode_id = "' + str(row[0]) + '" AND thumbnail = 0').fetchone()
         local_file_id_thumb = c2.execute('SELECT local_file_id FROM content_file WHERE contentnode_id = "' + str(row[0]) + '" AND thumbnail = 1').fetchone()
@@ -41,7 +43,24 @@ with open('content_contentnode.csv', 'w', newline='') as csvfile:
         if not (local_file_id_thumb is None):
             local_file_id_thumb = local_file_id_thumb[0]
 
-        csvwriter.writerow(tuple(list(row)+[local_file_id]+[local_file_id_thumb]))
+        # parent_id
+        parent_id_str = ''
+        parent_id = c2.execute('SELECT parent_id FROM content_contentnode WHERE id = "' + str(row[0]) + '"').fetchone()[0]
+        if parent_id is None:
+            flag = False
+            parent_id_str = 'None'
+        else:
+            parent_id_str += str(parent_id)
+        while flag:
+            parent_id = c2.execute('SELECT parent_id FROM content_contentnode WHERE id = "' + str(parent_id) + '"').fetchone()[0]
+            if parent_id is None:
+                flag = False
+            else:
+                parent_id_str += '/' + str(parent_id)
+        parent_id_str = parent_id_str.split('/')
+        parent_id_str.reverse()
+        parent_id_str = '/'.join(parent_id_str)
+        csvwriter.writerow(tuple(list(row)+[local_file_id]+[local_file_id_thumb]+[parent_id_str]))
 
 conn.close()
 conn2.close()
