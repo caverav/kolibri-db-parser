@@ -32,7 +32,9 @@ with open('content_contentnode.csv', 'w', newline='') as csvfile:
     # Iterar por cada fila de content_contentnode
     for row in c.execute('SELECT * FROM content_contentnode'):
         flag = True
-        print(cnt)
+        # if it is a closed percentage
+        if cnt % 4050 == 0 or cnt == 40401:
+            print(str(round((cnt/40401)*100))+"%")
         cnt+=1
         # local file id
         local_file_id = c2.execute('SELECT local_file_id FROM content_file WHERE contentnode_id = "' + str(row[0]) + '" AND thumbnail = 0').fetchone()
