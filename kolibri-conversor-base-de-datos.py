@@ -16,7 +16,7 @@ c = conn.cursor()
 # CREACION DEL CSV
 
 # Columnas
-fieldnames = ['id', 'title', 'content_id', 'channel_id', 'description', 'sort_order', 'license_owner', 'author', 'kind', 'available', 'lft', 'rght', 'tree_id', 'level', 'lang_id', 'license_description', 'license_name', 'coach_content', 'num_coach_contents', 'on_device_resources', 'options', 'parent_id', 'local_file_id', 'local_file_id_thumb', 'parents'] # falta columna padres y columna tags
+fieldnames = ['id', 'title', 'content_id', 'channel_id', 'description', 'sort_order', 'license_owner', 'author', 'kind', 'available', 'lft', 'rght', 'tree_id', 'level', 'lang_id', 'license_description', 'license_name', 'coach_content', 'num_coach_contents', 'on_device_resources', 'options', 'parent_id', 'local_file_id', 'local_file_id_thumb', 'parents'] # falta columna tags
 
 with open('content_contentnode.csv', 'w', newline='') as csvfile:
 
@@ -57,11 +57,15 @@ with open('content_contentnode.csv', 'w', newline='') as csvfile:
                 flag = False
             else:
                 parent_id_str += '/' + str(parent_id)
+        # Revertir el orden de los padres
         parent_id_str = parent_id_str.split('/')
         parent_id_str.reverse()
         parent_id_str = '/'.join(parent_id_str)
+
+        # escribir la fila en el csv
         csvwriter.writerow(tuple(list(row)+[local_file_id]+[local_file_id_thumb]+[parent_id_str]))
 
+# cerrar conexiones y archivos
 conn.close()
 conn2.close()
 csvfile.close()
