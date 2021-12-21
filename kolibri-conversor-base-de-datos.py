@@ -31,11 +31,13 @@ with open('content_contentnode.csv', 'w', newline='') as csvfile:
     cnt = 0
     # Iterar por cada fila de content_contentnode
     for row in c.execute('SELECT * FROM content_contentnode'):
+
+        # Mostrar el progreso
         flag = True
-        # if it is a closed percentage
         if cnt % 4050 == 0 or cnt == 40401:
             print(str(round((cnt/40401)*100))+"%")
         cnt+=1
+
         # local file id
         local_file_id = c2.execute('SELECT local_file_id FROM content_file WHERE contentnode_id = "' + str(row[0]) + '" AND thumbnail = 0').fetchone()
         local_file_id_thumb = c2.execute('SELECT local_file_id FROM content_file WHERE contentnode_id = "' + str(row[0]) + '" AND thumbnail = 1').fetchone()
@@ -69,7 +71,7 @@ with open('content_contentnode.csv', 'w', newline='') as csvfile:
         # tags
         tags = c2.execute('SELECT contenttag_id FROM content_contentnode_tags WHERE contentnode_id = "' + str(row[0]) + '"').fetchall()
 
-        # retrieve tag names from tags
+        # obtener los nombres de las tags
         tags_str = ''
         for tag in tags:
             tag_name = c2.execute('SELECT tag_name FROM content_contenttag WHERE id = "' + str(tag[0]) + '"').fetchone()[0]
