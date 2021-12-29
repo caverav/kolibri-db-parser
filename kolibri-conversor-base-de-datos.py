@@ -53,19 +53,26 @@ with open('content_contentnode.csv', 'w', newline='') as csvfile:
         parent_id = c2.execute('SELECT parent_id FROM content_contentnode WHERE id = "' + str(row[0]) + '"').fetchone()[0]
         if parent_id is None:
             flag = False
-            parent_id_str = 'None'
+            parent_id_str = ''
         else:
-            parent_id_str += str(parent_id)
-        while flag:
-            parent_id = c2.execute('SELECT parent_id FROM content_contentnode WHERE id = "' + str(parent_id) + '"').fetchone()[0]
-            if parent_id is None:
-                flag = False
-            else:
-                parent_id_str += '/' + str(parent_id)
+            parent_id_str = c2.execute('SELECT title FROM content_contentnode WHERE id = "' + str(parent_id) + '"').fetchone()[0]
+            while flag:
+                parent_id = c2.execute('SELECT title FROM content_contentnode WHERE id = "' + str(parent_id) + '"').fetchone()
+                if parent_id is not None:
+                    parent_id = parent_id[0]
+                    if parent_id == parent_id_str:
+                        parent_id = ''
+                        continue
+                    else:
+                        parent_id_str += '|' + str(parent_id)
+                else:
+                    flag = False
+                
+
         # Revertir el orden de los padres
-        parent_id_str = parent_id_str.split('/')
+        parent_id_str = parent_id_str.split('|')
         parent_id_str.reverse()
-        parent_id_str = '/'.join(parent_id_str)
+        parent_id_str = '|'.join(parent_id_str)
 
 
         # tags
@@ -75,8 +82,8 @@ with open('content_contentnode.csv', 'w', newline='') as csvfile:
         tags_str = ''
         for tag in tags:
             tag_name = c2.execute('SELECT tag_name FROM content_contenttag WHERE id = "' + str(tag[0]) + '"').fetchone()[0]
-            tags_str += tag_name + '/'
-        if len(tags_str) > 0 and tags_str[-1] == '/':
+            tags_str += tag_name + '|'
+        if len(tags_str) > 0 and tags_str[-1] == '|':
             tags_str = tags_str[:-1]
         # escribir la fila en el csv
         csvwriter.writerow(tuple(list(row)+[local_file_id]+[local_file_id_thumb]+[parent_id_str]+[tags_str]))
