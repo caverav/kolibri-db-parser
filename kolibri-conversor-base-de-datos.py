@@ -55,9 +55,10 @@ with open('content_contentnode.tsv', 'w', newline='') as csvfile:
             flag = False
             parent_id_str = ''
         else:
-            parent_id_str = c2.execute('SELECT title FROM content_contentnode WHERE id = "' + str(parent_id) + '"').fetchone()[0]
+            parent_id_str += str(parent_id)
+            parent_id = c2.execute('SELECT title FROM content_contentnode WHERE id = "' + str(parent_id) + '"').fetchone()[0]
             while flag:
-                parent_id = c2.execute('SELECT title FROM content_contentnode WHERE id = "' + str(parent_id) + '"').fetchone()
+                parent_id = c2.execute('SELECT title FROM content_contentnode WHERE id = "' + str(parent_id).replace('\"', '\'') + '"').fetchone()
                 if parent_id is not None:
                     parent_id = parent_id[0]
                     if parent_id == parent_id_str:
@@ -67,7 +68,7 @@ with open('content_contentnode.tsv', 'w', newline='') as csvfile:
                         parent_id_str += '|' + str(parent_id)
                 else:
                     flag = False
-                
+
 
         # Revertir el orden de los padres
         parent_id_str = parent_id_str.split('|')
