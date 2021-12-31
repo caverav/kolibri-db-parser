@@ -18,10 +18,10 @@ c = conn.cursor()
 # Columnas
 fieldnames = ['id', 'title', 'content_id', 'channel_id', 'description', 'sort_order', 'license_owner', 'author', 'kind', 'available', 'lft', 'rght', 'tree_id', 'level', 'lang_id', 'license_description', 'license_name', 'coach_content', 'num_coach_contents', 'on_device_resources', 'options', 'parent_id', 'local_file_id', 'local_file_id_thumb', 'parents', 'tags']
 
-with open('content_contentnode.csv', 'w', newline='') as csvfile:
+with open('content_contentnode.tsv', 'w', newline='') as csvfile:
 
     # Creacion del archivo
-    csvwriter = csv.writer(csvfile)
+    csvwriter = csv.writer(csvfile, delimiter='\t')
     csvwriter.writerow(fieldnames)
 
 
