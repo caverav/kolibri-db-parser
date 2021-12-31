@@ -37,6 +37,9 @@ with open('content_contentnode.tsv', 'w', newline='') as csvfile:
         if cnt % 4050 == 0 or cnt == 40401:
             print(str(round((cnt/40401)*100))+"%")
         cnt+=1
+        
+        if test:=c2.execute('SELECT kind FROM content_contentnode WHERE id = "' + str(row[0]) + '"').fetchone()[0] == 'topic':
+            continue
 
         # local file id
         local_file_id = c2.execute('SELECT local_file_id FROM content_file WHERE contentnode_id = "' + str(row[0]) + '" AND thumbnail = 0').fetchone()
@@ -55,17 +58,18 @@ with open('content_contentnode.tsv', 'w', newline='') as csvfile:
             flag = False
             parent_id_str = ''
         else:
-            parent_id_str += str(parent_id)
-            parent_id = c2.execute('SELECT title FROM content_contentnode WHERE id = "' + str(parent_id) + '"').fetchone()[0]
+            parent_name = c2.execute('SELECT title FROM content_contentnode WHERE id = "' + str(parent_id) + '"').fetchone()[0]
+            parent_id_str += str(parent_name)
             while flag:
-                parent_id = c2.execute('SELECT title FROM content_contentnode WHERE id = "' + str(parent_id).replace('\"', '\'') + '"').fetchone()
+                parent_id = c2.execute('SELECT parent_id FROM content_contentnode WHERE id = "' + str(parent_id) + '"').fetchone()[0]
+                parent_name = c2.execute('SELECT title FROM content_contentnode WHERE id = "' + str(parent_id) + '"').fetchone()
                 if parent_id is not None:
-                    parent_id = parent_id[0]
-                    if parent_id == parent_id_str:
-                        parent_id = ''
+                    parent_name = parent_name[0]
+                    if parent_name == parent_id_str:
+                        parent_name = ''
                         continue
                     else:
-                        parent_id_str += '|' + str(parent_id)
+                        parent_id_str += '|' + str(parent_name)
                 else:
                     flag = False
 
